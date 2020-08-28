@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans https://www.springframework.org/schema/beans/spring-beans.xsd">
+	
+	<!-- Root Context: defines shared resources visible to all other web components -->
+	
+	<!-- spring-jdbc 연결 -->
+	<bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate" autowire="byName" />
+	
+	<!-- DB 접속 -->
+	<bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+		<property name="driverClassName" value="oracle.jdbc.OracleDriver" />
+		<property name="url" value="jdbc:oracle:thin:@203.236.220.76:1521:xe" />
+		<property name="username" value="c##sprite" />
+		<property name="password" value="7963" />
+	</bean>
+	
+	<!-- Mybatis - Oracle 연결, mapper 위치 지정 -->
+	<bean id="sqlSessionFactoryBean" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="dataSource" ref="dataSource"/>
+		<property name="mapperLocations" value="classpath*:com/ict/db/mapper.xml" />
+	</bean>
+	
+	<!-- sqlSesstionTemplate -->
+	<bean id="sqlSessionTemplate" class="org.mybatis.spring.SqlSessionTemplate">
+		<constructor-arg ref="sqlSessionFactoryBean" />
+	</bean>
+	
+	<!-- 사용할 클래스 -->
+	<bean id="dao" class="com.ict.db.DAO" autowire="byName">
+		<property name="sqlSessionTemplate" ref="sqlSessionTemplate"></property>
+	</bean>
+	
+	<!-- 파일처리 -->
+	<bean id="multiResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+		<property name="defaultEncoding" value="UTF-8"></property>
+		<property name="maxUploadSize" value="104857600"></property>
+	</bean>
+	
+</beans>
